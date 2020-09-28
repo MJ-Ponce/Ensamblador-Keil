@@ -1,0 +1,4 @@
+Dependencies for Project 'LEDS', Target 'Target 1': (DO NOT MODIFY !)
+CompilerVersion: 5060750::V5.06 update 6 (build 750)::ARMCC
+F (.\LEDS.s)(0x5F53E121)(--cpu Cortex-M4.fp.sp -g --apcs=interwork -I.\RTE\_Target_1-IC:\Users\Majo\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 529" --pd "TM4C123GH6PM SETA 1"--list .\listings\leds.lst --xref -o .\objects\leds.o --depend .\objects\leds.d)
+F (..\..\startup.s)(0x5F4479EF)(--cpu Cortex-M4.fp.sp -g --apcs=interwork -I.\RTE\_Target_1-IC:\Users\Majo\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 529" --pd "TM4C123GH6PM SETA 1"--list .\listings\startup.lst --xref -o .\objects\startup.o --depend .\objects\startup.d)

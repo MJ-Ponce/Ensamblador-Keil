@@ -1,0 +1,7 @@
+--cpu=Cortex-M4.fp.sp
+".\objects\pulsadores.o"
+".\objects\startup.o"
+--strict --scatter ".\Objects\PULSADORES.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\PULSADORES.map" -o .\Objects\PULSADORES.axf
