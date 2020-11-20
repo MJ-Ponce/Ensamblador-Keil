@@ -1,0 +1,6 @@
+--cpu Cortex-M4.fp.sp -g --apcs=interwork 
+-I.\RTE\_Target_1
+-IC:\Users\Majo\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123
+-IC:\Keil_v5\ARM\CMSIS\Include
+--pd "__UVISION_VERSION SETA 529" --pd "TM4C123GH6PM SETA 1"
+--list .\listings\parcial2-2.lst --xref -o .\objects\parcial2-2.o --depend .\objects\parcial2-2.d "Parcial2-2.s"

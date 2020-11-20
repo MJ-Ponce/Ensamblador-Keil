@@ -1,0 +1,4 @@
+En cada uno de los programas lo unico que se debe de realizar
+es colocar el valor que se indica por medio del comentario 
+en cada uno de los valores en blanco que se encuentran al inicio 
+del programa.

@@ -1,0 +1,306 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         
+    2 00000000                 AREA             |.text|, CODE, READONLY, ALIGN=
+2
+    3 00000000                 THUMB
+    4 00000000                 EXPORT           Start
+    5 00000000         Start
+    6 00000000         ;Valores de Azimut 
+    7 00000000 EEB3 0A0E       VLDR.F32         S0, =30     ;Distancia
+    8 00000004 EDDF 0A49       VLDR.F32         S1, =35     ;Grados
+    9 00000008 ED9F 1A49       VLDR.F32         S2, =153    ;Minutos
+   10 0000000C EDDF 1A49       VLDR.F32         S3, =200    ;Segundos
+   11 00000010         
+   12 00000010         ;Constantes
+   13 00000010 ED9F 2A49       VLDR.F32         S4, =3.141592654 ;pi
+   14 00000014 EDDF 2A49       VLDR.F32         S5, =1.570796327 ;pi/2
+   15 00000018 ED9F 3A49       VLDR.F32         S6, =60     ;
+   16 0000001C EDDF 3A49       VLDR.F32         S7, =180    ;
+   17 00000020         
+   18 00000020         ;Trasladar a sistema decimal.  Gd=Gs+Ms/60+Ss/3600
+   19 00000020         Traslado
+   20 00000020 EE81 1A03       VDIV.F32         S2, S2, S6  ;Minutos
+   21 00000024 EE23 3A03       VMUL.F32         S6, S6, S6  ;3600
+   22 00000028 EEC1 1A83       VDIV.F32         S3, S3, S6  ;Segundos
+   23 0000002C EE70 0A81       VADD.F32         S1, S1, S2
+   24 00000030 EE70 0AA1       VADD.F32         S1, S1, S3
+   25 00000034 E7FF            B                CambioAng
+   26 00000036         
+   27 00000036         CambioAng
+   28 00000036         ;Transformar grados a radianes.
+   29 00000036 EE82 2A23       VDIV.F32         S4, S4, S7
+   30 0000003A EE60 0A82       VMUL.F32         S1, S1, S4
+   31 0000003E         ;Angulo real.
+   32 0000003E EE72 0AE0       VSUB.F32         S1, S5, S1
+   33 00000042 EDDF 2A41       VLDR.F32         S5,=0
+   34 00000046 E7FF            B                Numerador1
+   35 00000048         
+   36 00000048         ;Serie de Taylor Coseno
+   37 00000048         ;cosx=((-1)^n*(x^(2n)))/2n!
+   38 00000048         Numerador1
+   39 00000048 EEF7 1A00       VLDR.F32         S3, =1      ;n=0    1    +
+   40 0000004C EE20 2AA0       VMUL.F32         S4,S1,S1    ;n=1   x^2  -
+   41 00000050 EE62 2A02       VMUL.F32         S5,S4,S4    ;n=2   x^4  +  
+   42 00000054 EE22 3A82       VMUL.F32         S6,S5,S4    ;n=3   x^6  -
+   43 00000058 EE62 3AA2       VMUL.F32         S7,S5,S5    ;n=4   x^8  +
+   44 0000005C EE23 4A22       VMUL.F32         S8,S6,S5    ;n=5   x^10 -
+   45 00000060 E7FF            B                Denominador1
+   46 00000062         
+   47 00000062         Denominador1
+   48 00000062 EEF7 1A00       VLDR.F32         S3, =1      ;n=0 1!  
+   49 00000066 EEF0 5A00       VLDR.F32         S11, =2     ;n=1 2!
+   50 0000006A EEB3 6A08       VLDR.F32         S12, =24    ;n=2 4!
+   51 0000006E EDDF 6A37       VLDR.F32         S13, =720   ;n=3 6!
+   52 00000072 ED9F 7A37       VLDR.F32         S14, =40320 ;n=4 8!
+   53 00000076 EDDF 7A37       VLDR.F32         S15, =3628800 ;n=5 10!
+   54 0000007A E7FF            B                Division1
+   55 0000007C         
+   56 0000007C         Division1
+   57 0000007C EE81 9AA1       VDIV.F32         S18, S3, S3 ;n=0
+   58 00000080 EEC2 9A25       VDIV.F32         S19, S4, S11 ;n=1
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   59 00000084 EE82 AA86       VDIV.F32         S20, S5, S12 ;n=2
+   60 00000088 EEC3 AA26       VDIV.F32         S21, S6, S13 ;n=3
+   61 0000008C EE83 BA87       VDIV.F32         S22, S7, S14 ;n=4
+   62 00000090 EEC4 BA27       VDIV.F32         S23, S8, S15 ;n=5
+   63 00000094 E7FF            B                Resultado1
+   64 00000096         
+   65 00000096         Resultado1
+   66 00000096 EE39 1A69       VSUB.F32         S2, S18, S19
+   67 0000009A EE31 1A0A       VADD.F32         S2, S2, S20
+   68 0000009E EE31 1A6A       VSUB.F32         S2, S2, S21
+   69 000000A2 EE31 1A0B       VADD.F32         S2, S2, S22
+   70 000000A6 EE31 1A6B       VSUB.F32         S2, S2, S23
+   71 000000AA E7FF            B                EjeX
+   72 000000AC         
+   73 000000AC         EjeX
+   74 000000AC EE21 1A00       VMUL.F32         S2, S2, S0  ;X en S2
+   75 000000B0 E7FF            B                Numerador2
+   76 000000B2         
+   77 000000B2         ;Serie de Taylor Seno
+   78 000000B2         ;cosx=((-1)^n*(x^(2n+1)))/(2n+1)!
+   79 000000B2         Numerador2
+   80 000000B2         ;S1=Angulo=x ;n=0    x    +
+   81 000000B2 EE60 1AA0       VMUL.F32         S3,S1,S1
+   82 000000B6 EE61 1AA0       VMUL.F32         S3,S3,S1    ;n=1   x^3  -
+   83 000000BA EE21 2AA0       VMUL.F32         S4,S3,S1
+   84 000000BE EE22 2A20       VMUL.F32         S4,S4,S1    ;n=2   x^5  +  
+   85 000000C2 EE62 2A20       VMUL.F32         S5,S4,S1
+   86 000000C6 EE62 2AA0       VMUL.F32         S5,S5,S1    ;n=3   x^7  -
+   87 000000CA EE22 3AA0       VMUL.F32         S6,S5,S1
+   88 000000CE EE23 3A20       VMUL.F32         S6,S6,S1    ;n=4   x^9  +
+   89 000000D2 EE63 3A20       VMUL.F32         S7,S6,S1
+   90 000000D6 EE63 3AA0       VMUL.F32         S7,S7,S1    ;n=5   x^11 -
+   91 000000DA E7FF            B                Denominador2
+   92 000000DC         
+   93 000000DC         Denominador2
+   94 000000DC EEB7 5A00       VLDR.F32         S10, =1     ;n=0 1!  
+   95 000000E0 EEF1 5A08       VLDR.F32         S11, =6     ;n=1 3!
+   96 000000E4 ED9F 6A1C       VLDR.F32         S12, =120   ;n=2 5!
+   97 000000E8 EDDF 6A1C       VLDR.F32         S13, =5040  ;n=3 7!
+   98 000000EC ED9F 7A1C       VLDR.F32         S14, =362880 ;n=4 9!
+   99 000000F0 EDDF 7A1C       VLDR.F32         S15, =39916800 ;n=5 11!
+  100 000000F4 E7FF            B                Division2
+  101 000000F6         
+  102 000000F6         Division2
+  103 000000F6 EE80 9A85       VDIV.F32         S18, S1, S10 ;n=0
+  104 000000FA EEC1 9AA5       VDIV.F32         S19, S3, S11 ;n=1
+  105 000000FE EE82 AA06       VDIV.F32         S20, S4, S12 ;n=2
+  106 00000102 EEC2 AAA6       VDIV.F32         S21, S5, S13 ;n=3
+  107 00000106 EE83 BA07       VDIV.F32         S22, S6, S14 ;n=4
+  108 0000010A EEC3 BAA7       VDIV.F32         S23, S7, S15 ;n=5
+  109 0000010E E7FF            B                Resultado2
+  110 00000110         
+  111 00000110         Resultado2
+  112 00000110 EE79 1A69       VSUB.F32         S3, S18, S19
+  113 00000114 EE71 1A8A       VADD.F32         S3, S3, S20
+  114 00000118 EE71 1AEA       VSUB.F32         S3, S3, S21
+  115 0000011C EE71 1A8B       VADD.F32         S3, S3, S22
+  116 00000120 EE71 1AEB       VSUB.F32         S3, S3, S23
+  117 00000124 E7FF            B                EjeY
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+  118 00000126         
+  119 00000126         EjeY
+  120 00000126 EE61 1A80       VMUL.F32         S3, S3, S0  ;Y en S3.
+  121 0000012A E7FF            B                Loop
+  122 0000012C         
+  123 0000012C         Loop
+  124 0000012C         
+  125 0000012C                 ALIGN
+  126 0000012C                 END
+              420C0000 
+              43190000 
+              43480000 
+              40490FDB 
+              3FC90FDB 
+              42700000 
+              43340000 
+              00000000 
+              44340000 
+              471D8000 
+              4A5D7C00 
+              42F00000 
+              459D8000 
+              48B13000 
+              4C184540 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
+interwork --depend=.\objects\parcial2-2.d -o.\objects\parcial2-2.o -I.\RTE\_Tar
+get_1 -IC:\Users\Majo\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Includ
+e\TM4C123 -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__UVISION_VERSION SETA 52
+9" --predefine="TM4C123GH6PM SETA 1" --list=.\listings\parcial2-2.lst Parcial2-
+2.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.text 00000000
+
+Symbol: .text
+   Definitions
+      At line 2 in file Parcial2-2.s
+   Uses
+      None
+Comment: .text unused
+CambioAng 00000036
+
+Symbol: CambioAng
+   Definitions
+      At line 27 in file Parcial2-2.s
+   Uses
+      At line 25 in file Parcial2-2.s
+Comment: CambioAng used once
+Denominador1 00000062
+
+Symbol: Denominador1
+   Definitions
+      At line 47 in file Parcial2-2.s
+   Uses
+      At line 45 in file Parcial2-2.s
+Comment: Denominador1 used once
+Denominador2 000000DC
+
+Symbol: Denominador2
+   Definitions
+      At line 93 in file Parcial2-2.s
+   Uses
+      At line 91 in file Parcial2-2.s
+Comment: Denominador2 used once
+Division1 0000007C
+
+Symbol: Division1
+   Definitions
+      At line 56 in file Parcial2-2.s
+   Uses
+      At line 54 in file Parcial2-2.s
+Comment: Division1 used once
+Division2 000000F6
+
+Symbol: Division2
+   Definitions
+      At line 102 in file Parcial2-2.s
+   Uses
+      At line 100 in file Parcial2-2.s
+Comment: Division2 used once
+EjeX 000000AC
+
+Symbol: EjeX
+   Definitions
+      At line 73 in file Parcial2-2.s
+   Uses
+      At line 71 in file Parcial2-2.s
+Comment: EjeX used once
+EjeY 00000126
+
+Symbol: EjeY
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+   Definitions
+      At line 119 in file Parcial2-2.s
+   Uses
+      At line 117 in file Parcial2-2.s
+Comment: EjeY used once
+Loop 0000012C
+
+Symbol: Loop
+   Definitions
+      At line 123 in file Parcial2-2.s
+   Uses
+      At line 121 in file Parcial2-2.s
+Comment: Loop used once
+Numerador1 00000048
+
+Symbol: Numerador1
+   Definitions
+      At line 38 in file Parcial2-2.s
+   Uses
+      At line 34 in file Parcial2-2.s
+Comment: Numerador1 used once
+Numerador2 000000B2
+
+Symbol: Numerador2
+   Definitions
+      At line 79 in file Parcial2-2.s
+   Uses
+      At line 75 in file Parcial2-2.s
+Comment: Numerador2 used once
+Resultado1 00000096
+
+Symbol: Resultado1
+   Definitions
+      At line 65 in file Parcial2-2.s
+   Uses
+      At line 63 in file Parcial2-2.s
+Comment: Resultado1 used once
+Resultado2 00000110
+
+Symbol: Resultado2
+   Definitions
+      At line 111 in file Parcial2-2.s
+   Uses
+      At line 109 in file Parcial2-2.s
+Comment: Resultado2 used once
+Start 00000000
+
+Symbol: Start
+   Definitions
+      At line 5 in file Parcial2-2.s
+   Uses
+      At line 4 in file Parcial2-2.s
+Comment: Start used once
+Traslado 00000020
+
+Symbol: Traslado
+   Definitions
+      At line 19 in file Parcial2-2.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+      None
+Comment: Traslado unused
+15 symbols
+350 symbols in table
