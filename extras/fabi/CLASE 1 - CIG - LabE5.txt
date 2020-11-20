@@ -1,0 +1,85 @@
+-----INTRODUCCIÓN A LA PROGRAMACIÓN------
+
+Directivas:
+	Son pseudo operaciones pues afectan unicamente al lenguaje ensamblador mas no al micro.
+	No generan codigo ejecutable pero indican como funcionará el programa.
+
+	1. THUMB:
+		Indica que tipo de instrucción se estará utilizando. Set de instrucciones reducido a 16 bits.
+
+
+	2. AREA:
+		Permite definir bloques de código y datos:
+			2.1 | text.|: Indica que el código comenzará a redactarse.
+			2.2 CODE: Indica que es código de máquina.
+			2.3 READONLY: Indica que se estará trabajando en la ROM.
+	3. ALIGN: Alinea la sección a un límite de 2^n bytes.
+
+	4. END: Indica que el programa ha terminado.
+
+	5. EQU: Permite asignar valores más grandes a un registro.
+
+Registros de propósito general: 
+	Son 31 registros de 32 bits c/u. Solo son observables 16 registros y solo 13 son utilizables: R_0 a R_12
+		R_13: Stack pointer o puntero de pila.
+		R_14: Link register --> Guarda la dirección de la siguiente línea.
+		R_15: Program Counter --> Es un contador con la dirección de 2 líneas adelante.
+
+FPU (Float Point Unit):
+	Estas tendran un prefijo "V" y Sufijo ".F32"
+	Ejemplo:
+		MOV R1, #1  --> (Sin punto flotante)
+		VMOV.F32 S1,#1 --> (Con punto flotante)
+
+Carga y almacenamiento
+	MOV: Asignar inmediatamente
+	LDR: Carga información de memoria a un registro.
+	STR: Guarda o almacena información de un registro en memoria.
+
+Intrucciones Aritméticas:
+	ADD --> Suma
+		Ejemplo:
+		ADD R1,#3 --> R1=R1+3
+		ADD R1,R2,R3 --> R1=R2+R3
+		VADD.F32 S1,S2,S3 --> S1=S2+S3 --> (Con punto flotante)
+
+	MUL --> Multiplicación
+		Ejemplo:
+		MUL R1,R2,R3 --> R1=R2*R3
+
+	SUB --> Sustracción
+		Ejemplo:
+		SUB R1,R2,R3 --> R1=R2-R3
+
+Instrucciones Lógicas
+	AND --> AND
+		Ejemplo: 
+		AND R1,R2
+
+	ORR --> OR
+		Ejemplo:
+		ORR R1,R2
+
+	ORN --> NOR 
+		Ejemplo:
+		ORN R1,R2 (NOR)
+
+Instrucciones de salto
+	B: Salto
+	BX: Salto indirecto
+	BLX: Salto con enlace indirecto
+
+Instrucción de condicionamiento
+	Se utiliza para comparar datos.
+	Ejemplo:
+	CMP R1,#4  --> (Sin punto flotante)
+	VCMP.F32 S1,S3 --> (Con punto flotante)
+
+Verificar comparación
+	Ejemplo:
+	VMRS APSR_nzcv, FPSCR --> (Para punto flotante)
+	BEQ (Si son iguales)
+
+	VMRS APSR_nzcv, FPSCR --> (Para punto flotante)
+	BNE (Mientras no sea igual a 1) 
+

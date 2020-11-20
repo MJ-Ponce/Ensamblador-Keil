@@ -1,0 +1,134 @@
+-------------ASIGNACION DE NUMEROS A REGISTROS--------------
+	AREA codigo, CODE, READONLY, ALIGN=2
+	THUMB
+	EXPORT Start
+	
+Start		
+	MOV R1,#0x0f
+	LDR R0,=15
+	STR R1,[R0]
+	LDR R4,[R0]	
+	NOP
+	NOP
+	ALIGN
+	END
+
+
+-------------------OPERADORES ARITMETICOS-------------------
+
+	THUMB
+	AREA NOMBRE, ALIGN=4
+mem SPACE 4 //Espacio de memoria en 4bits	
+	AREA|text|,CODE,READONLY, ALIGN=2
+	EXPORT Start
+Start		
+	MOV R1,#3
+	MOV R2,#2
+	ADD R3,R1,R2
+	VMOV.F32 S1,#5
+	VMOV.F32 S2,#6
+	VMUL.F32 S3,S2,S1
+	NOP
+	ALIGN
+	END
+
+------------------------SALTOS---------------------------
+
+	THUMB
+	AREA NOMBRE, ALIGN=4
+mem SPACE 4 //Espacio de memoria en 4bits	
+	AREA|text|,CODE,READONLY, ALIGN=2
+	EXPORT Start
+Start		
+	MOV R1,#1
+	B Salto2
+Salto1
+	MOV R2,#1
+	B Fin ;//Termina proceso
+Salto2
+	MOV R3,#3
+	B Salto1
+Fin ;13 Fin //Para terminar el salto
+	ALIGN
+	END
+
+----------------LEVANTA BANDERA------------------
+
+	THUMB
+	AREA NOMBRE, ALIGN=4
+mem SPACE 4 //Espacio de memoria en 4bits	
+	AREA|text|,CODE,READONLY, ALIGN=2
+	EXPORT Start
+Start		
+	MOV R1,#1
+Salto0
+	ADD R1,#1
+	MOV R2,#10
+	CMP R1, R2
+	BEQ Salto1
+	BNE Salto0 
+Salto1
+	MOV R10,#5
+	B Salto0
+	ALIGN
+	END
+
+-----------------------COMPARA BANDERA----------------------
+
+	THUMB
+	AREA NOMBRE, ALIGN=4
+mem SPACE 4 //Espacio de memoria en 4bits	
+	AREA|text|,CODE,READONLY, ALIGN=2
+	EXPORT Start
+Start		
+	VLDR.F32 S1,=1
+	VLDR.F32 S2,=1
+	VCMP.F32 S1, S2
+	VMRS APSR_nzcv,FPSCR
+Salto1
+	MOV R10,#5
+	ALIGN
+	END
+------------------------FACTORIAL--------------------------
+	THUMB
+	AREA NOMBRE, ALIGN=4
+mem SPACE 4; Espacio de memoria en 4bits	
+	AREA |text|,CODE,READONLY, ALIGN=2
+	EXPORT Start
+Start	
+	VMOV.F32 S1,#5;5!
+	VMOV.F32 S2,#1
+	VMOV.F32 S3,#1
+	
+Factorial
+	VMUL.F32 S2,S1
+	VSUB.F32 S1,S3
+	VCMP.F32 S1,S3
+	
+	VMRS APSR_nzcv,FPSCR
+	BNE Factorial
+Fin B Fin
+	ALIGN
+	END
+---------------Exponente n veces n-----------------
+	THUMB
+	AREA NOMBRE, ALIGN=4
+mem SPACE 4; Espacio de memoria en 4bits	
+	AREA |text|,CODE,READONLY, ALIGN=2
+	EXPORT Start
+Start	
+	VMOV.F32 S1,#3
+	VMOV.F32 S2,#3
+	VMOV.F32 S3,#3
+	VMOV.F32 S4,#1
+	
+Sumatoria
+	VMUL.F32 S2,S1
+	VSUB.F32 S3,S4
+	VCMP.F32 S3,S4
+	
+	VMRS APSR_nzcv,FPSCR
+	BNE Sumatoria
+Fin B Fin
+	ALIGN
+	END
